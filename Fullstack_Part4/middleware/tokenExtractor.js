@@ -1,4 +1,4 @@
-// middleware/tokenExtractor.js
+// Fullstack_Part4/middleware/tokenExtractor.js
 const tokenExtractor = (request, response, next) => {
     const authHeader = request.get('authorization');
     if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {

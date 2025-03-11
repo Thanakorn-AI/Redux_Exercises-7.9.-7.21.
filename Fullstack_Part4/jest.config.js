@@ -1,4 +1,4 @@
-// jest.config.js
+// Fullstack_Part4/jest.config.js
 module.exports = {
     testEnvironment: 'node',
     setupFilesAfterEnv: ['./jest.setup.js'],

@@ -1,4 +1,4 @@
-// bloglist-app/app.js
+// Fullstack_Part4/app.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');

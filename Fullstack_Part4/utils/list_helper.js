@@ -1,4 +1,4 @@
-// utils/list_helper.js
+// Fullstack_Part4/utils/list_helper.js
 const dummy = (blogs) => {
     return 1;
   };

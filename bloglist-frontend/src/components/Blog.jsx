@@ -1,9 +1,9 @@
 // bloglist-frontend/src/components/Blog.jsx
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
   const blogStyle = {
     paddingTop: 10,
@@ -11,28 +11,28 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  }
+  };
 
   const handleLike = async () => {
     try {
       const updatedBlog = {
         ...blog,
         likes: blog.likes + 1,
-        user: blog.user.id
-      }
-      await updateBlog(blog.id, updatedBlog)
+        user: blog.user.id,
+      };
+      await updateBlog(blog.id, updatedBlog);
     } catch (error) {
-      console.error('Error updating likes:', error)
+      console.error('Error updating likes:', error);
     }
-  }
+  };
 
   const handleDelete = () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
-      deleteBlog(blog.id)
+      deleteBlog(blog.id);
     }
-  }
+  };
 
-  const showDeleteButton = user && blog.user.username === user.username
+  const showDeleteButton = user && blog.user.username === user.username;
 
   return (
     <div style={blogStyle}>
@@ -45,15 +45,23 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
       {visible && (
         <div className="blogDetails" data-testid="blog-details">
           <p>URL: {blog.url}</p>
-          <p>Likes: {blog.likes} <button onClick={handleLike} data-testid={`like-button-${blog.id}`}>like</button></p>
+          <p>
+            Likes: {blog.likes}{' '}
+            <button onClick={handleLike} data-testid={`like-button-${blog.id}`}>
+              like
+            </button>
+          </p>
           <p>User: {blog.user.name}</p>
-          {showDeleteButton && <button onClick={handleDelete} data-testid="delete-button">delete</button>}
+          {showDeleteButton && (
+            <button onClick={handleDelete} data-testid="delete-button">
+              delete
+            </button>
+          )}
         </div>
       )}
     </div>
-  )
-}
-
+  );
+};
 
 Blog.propTypes = {
   blog: PropTypes.shape({
@@ -74,7 +82,6 @@ Blog.propTypes = {
     username: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
   }).isRequired,
-}
+};
 
-
-export default Blog
+export default Blog;

@@ -1,4 +1,4 @@
-// utils/config.js
+// Fullstack_Part4/utils/config.js
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3003;
