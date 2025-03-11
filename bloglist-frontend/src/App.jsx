@@ -32,21 +32,6 @@ const App = () => {
     }
   }, [user]); // Depend on user for token updates
 
-  const Notification = ({ message, type = 'error' }) =>
-    message && (
-      <div
-        data-testid="error-message"
-        style={{ color: type === 'error' ? 'red' : 'green', padding: '10px' }}
-      >
-        {message}
-      </div>
-    );
-
-  Notification.propTypes = {
-    message: PropTypes.string,
-    type: PropTypes.oneOf(['error', 'success']).isRequired,
-  };
-
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
