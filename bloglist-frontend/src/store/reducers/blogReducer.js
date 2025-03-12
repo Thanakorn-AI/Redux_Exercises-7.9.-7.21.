@@ -39,7 +39,7 @@ export const createBlog = (blogObject) => {
     dispatch({ type: 'ADD_BLOG', data: blog });
     dispatch(
       setNotification(
-        `A new blog "${blog.title}" by ${blog.author} added`,
+        `A new blog "${blog.title}" was added by ${blog.author}`,
         'success'
       )
     );
