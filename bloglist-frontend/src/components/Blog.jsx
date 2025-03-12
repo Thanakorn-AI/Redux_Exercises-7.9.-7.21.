@@ -1,12 +1,11 @@
 // bloglist-frontend/src/components/Blog.jsx
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { updateBlog, deleteBlog } from '../store/reducers/blogReducer';
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch();
-  const [visible, setVisible] = useState(false);
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,11 +13,6 @@ const Blog = ({ blog, user }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
-
-  const handleLike = async () => {
-    const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id };
-    dispatch(updateBlog(blog.id, updatedBlog));
   };
 
   const handleDelete = () => {
@@ -31,28 +25,11 @@ const Blog = ({ blog, user }) => {
 
   return (
     <div style={blogStyle}>
-      <div className="blogTitle" data-testid="blog-title">
-        {blog.title} {blog.author}
-        <button onClick={() => setVisible(!visible)} data-testid="view-toggle">
-          {visible ? 'hide' : 'view'}
+      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}
+      {showDeleteButton && (
+        <button onClick={handleDelete} data-testid="delete-button">
+          delete
         </button>
-      </div>
-      {visible && (
-        <div className="blogDetails" data-testid="blog-details">
-          <p>URL: {blog.url}</p>
-          <p>
-            Likes: {blog.likes}{' '}
-            <button onClick={handleLike} data-testid={`like-button-${blog.id}`}>
-              like
-            </button>
-          </p>
-          <p>User: {blog.user.name}</p>
-          {showDeleteButton && (
-            <button onClick={handleDelete} data-testid="delete-button">
-              delete
-            </button>
-          )}
-        </div>
       )}
     </div>
   );

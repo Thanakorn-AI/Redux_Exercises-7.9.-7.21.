@@ -1,6 +1,6 @@
 // bloglist-frontend/src/store/reducers/blogReducer.js
-import blogService from '../../services/blogs'
-import { setNotification } from '../../store/reducers/notificationReducer'
+import blogService from '../../services/blogs';
+import { setNotification } from '../../store/reducers/notificationReducer';
 
 const initialState = [];
 
@@ -57,6 +57,13 @@ export const deleteBlog = (id) => {
   return async (dispatch) => {
     await blogService.remove(id);
     dispatch({ type: 'DELETE_BLOG', data: { id } });
+  };
+};
+
+export const addComment = (id, comment) => {
+  return async (dispatch) => {
+    const updatedBlog = await blogService.addComment(id, { content: comment });
+    dispatch({ type: 'UPDATE_BLOG', data: updatedBlog });
   };
 };
 

@@ -1,15 +1,15 @@
 // bloglist-frontend/src/App.jsx
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Blog from './components/Blog';
+import Users from './components/Users';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import BlogForm from './components/BlogForm';
 import {
   initializeBlogs,
-  createBlog,
-  updateBlog,
-  deleteBlog,
+  createBlog
 } from './store/reducers/blogReducer';
 import { setNotification } from './store/reducers/notificationReducer';
 import {
@@ -21,8 +21,7 @@ import {
 const App = () => {
   const dispatch = useDispatch();
   const blogFormRef = useRef();
-  const user = useSelector((state) => state.user);
-  console.log('Current user:', user);
+  const user = useSelector((state) => state.user.currentUser);
   const blogs = useSelector((state) => state.blogs);
   const notification = useSelector((state) => state.notification);
 
@@ -95,24 +94,35 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Notification message={notification.message} type={notification.type} />
-      <h2>Blogs</h2>
-      <p>{user.name} logged in</p>
-      <button onClick={handleLogout}>Logout</button>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm createBlog={handleCreateBlog} />
-      </Togglable>
-      {blogs.map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateBlog={updateBlog}
-          deleteBlog={deleteBlog}
-          user={user}
-        />
-      ))}
-    </div>
+    <Router>
+      <div>
+        <Notification message={notification.message} type={notification.type} />
+        <nav style={{ marginBottom: 10 }}>
+          <Link style={{ marginRight: 10 }} to="/">Blogs</Link>
+          <Link style={{ marginRight: 10 }} to="/users">Users</Link>
+          <span>{user.name} logged in <button onClick={handleLogout}>Logout</button></span>
+        </nav>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <h2>Blogs</h2>
+                <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                  <BlogForm createBlog={handleCreateBlog} />
+                </Togglable>
+                {blogs.map((blog) => (
+                  <Blog key={blog.id} blog={blog} user={user} />
+                ))}
+              </>
+            }
+          />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<BlogView />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
