@@ -1,125 +1,87 @@
 // bloglist-frontend/src/App.jsx
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Blog from './components/Blog';
-import blogService from './services/blogs';
-import loginService from './services/login';
+import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import BlogForm from './components/BlogForm';
-import PropTypes from 'prop-types';
+import {
+  initializeBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+} from './store/reducers/blogReducer';
+import { setNotification } from './store/reducers/notificationReducer';
+import {
+  initializeUser,
+  loginUser,
+  logoutUser,
+} from './store/reducers/userReducer';
 
 const App = () => {
+  const dispatch = useDispatch();
   const blogFormRef = useRef();
-
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [user, setUser] = useState(null);
-  const [blogs, setBlogs] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const user = useSelector((state) => state.user);
+  console.log('Current user:', user);
+  const blogs = useSelector((state) => state.blogs);
+  const notification = useSelector((state) => state.notification);
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const blogs = await blogService.getAll();
-        setBlogs(blogs);
-      } catch (error) {
-        console.error('Error fetching blogs:', error);
-      }
-    };
-    if (user) {
-      // Only fetch if logged in (has token)
-      fetchBlogs();
-    }
-  }, [user]); // Depend on user for token updates
+    dispatch(initializeUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(initializeBlogs());
+  }, [dispatch, user]);
 
   const handleLogin = async (event) => {
     event.preventDefault();
+    const username = event.target.username.value;
+    const password = event.target.password.value;
     try {
-      const user = await loginService.login({ username, password });
-      setUser(user); // Save token and user details
-      setUsername('');
-      setPassword('');
-      blogService.setToken(user.token);
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
+      await dispatch(loginUser({ username, password }));
+      event.target.username.value = '';
+      event.target.password.value = '';
     } catch (exception) {
-      setErrorMessage(exception.response?.data?.error || 'Wrong credentials');
-      setTimeout(() => setErrorMessage(null), 5000);
+      console.log('Login error:', exception);
+      dispatch(
+        setNotification(
+          exception.response?.data?.error || 'Wrong credentials',
+          'error'
+        )
+      );
     }
   };
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedNoteappUser');
-    setUser(null);
-    blogService.setToken(null); // Clear token
+    dispatch(logoutUser());
   };
 
-  const createBlog = async (blogObject) => {
-    try {
-      const blog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(blog));
-      setSuccessMessage(
-        `a new blog ${blogObject.title} by ${blogObject.author} added`
+  const handleCreateBlog = (blogObject) => {
+    dispatch(createBlog(blogObject))
+      .then(() => blogFormRef.current.toggleVisibility())
+      .catch((error) =>
+        dispatch(
+          setNotification(
+            error.response?.data?.error || 'Error creating blog',
+            'error'
+          )
+        )
       );
-      setTimeout(() => setSuccessMessage(null), 5000);
-      blogFormRef.current.toggleVisibility(); // Hide form after creation
-    } catch (error) {
-      setErrorMessage(error.response?.data?.error || 'Error creating blog');
-      setTimeout(() => setErrorMessage(null), 5000);
-    }
-  };
-
-  const updateBlog = async (id, updatedBlog) => {
-    try {
-      const response = await blogService.update(id, updatedBlog);
-      setBlogs(
-        blogs
-          .map((blog) => (blog.id === id ? response : blog))
-          .sort((a, b) => b.likes - a.likes)
-      );
-    } catch (error) {
-      console.error('Error updating blog:', error);
-      setErrorMessage(error.response?.data?.error || 'Error updating blog');
-      setTimeout(() => setErrorMessage(null), 5000);
-    }
-  };
-
-  const deleteBlog = async (id) => {
-    await blogService.remove(id); // Use updated remove
-    const updatedBlogs = await blogService.getAll(); // Refetch all blogs
-    setBlogs(updatedBlogs);
   };
 
   const loginForm = () => (
     <div data-testid="login-form">
-      <Notification message={errorMessage} type="error" />
+      <Notification message={notification.message} type={notification.type} />
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
           username
-          <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-            data-testid="username"
-          />
+          <input type="text" name="username" data-testid="username" />
         </div>
         <div>
           password
-          <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-            data-testid="password"
-          />
+          <input type="password" name="password" data-testid="password" />
         </div>
         <button type="submit" data-testid="login-button">
           login
@@ -128,23 +90,20 @@ const App = () => {
     </div>
   );
 
-  if (user === null) {
+  if (!user) {
     return loginForm();
   }
 
-  // Sort blogs by likes (descending) before rendering
-  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
-
   return (
     <div>
-      <Notification message={successMessage} type="success" />
+      <Notification message={notification.message} type={notification.type} />
       <h2>Blogs</h2>
       <p>{user.name} logged in</p>
       <button onClick={handleLogout}>Logout</button>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <BlogForm createBlog={createBlog} />
+        <BlogForm createBlog={handleCreateBlog} />
       </Togglable>
-      {sortedBlogs.map((blog) => (
+      {blogs.map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}

@@ -8,7 +8,7 @@ const BlogForm = ({ createBlog }) => {
   const handleBlogSubmit = (event) => {
     event.preventDefault();
     createBlog(newBlog);
-    setNewBlog({ title: '', author: '', url: '' }); // Clear form
+    setNewBlog({ title: '', author: '', url: '' });
   };
 
   return (
@@ -20,9 +20,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             type="text"
             value={newBlog.title}
-            onChange={({ target }) =>
-              setNewBlog({ ...newBlog, title: target.value })
-            }
+            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
             placeholder="Enter title"
           />
         </div>
@@ -31,9 +29,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             type="text"
             value={newBlog.author}
-            onChange={({ target }) =>
-              setNewBlog({ ...newBlog, author: target.value })
-            }
+            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
             placeholder="Enter author"
           />
         </div>
@@ -42,9 +38,7 @@ const BlogForm = ({ createBlog }) => {
           <input
             type="text"
             value={newBlog.url}
-            onChange={({ target }) =>
-              setNewBlog({ ...newBlog, url: target.value })
-            }
+            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
             placeholder="Enter URL"
           />
         </div>

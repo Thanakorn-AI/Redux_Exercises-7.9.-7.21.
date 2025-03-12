@@ -1,8 +1,11 @@
 // bloglist-frontend/src/components/Blog.jsx
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
+import { updateBlog, deleteBlog } from '../store/reducers/blogReducer';
 
-const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
 
   const blogStyle = {
@@ -14,21 +17,13 @@ const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   };
 
   const handleLike = async () => {
-    try {
-      const updatedBlog = {
-        ...blog,
-        likes: blog.likes + 1,
-        user: blog.user.id,
-      };
-      await updateBlog(blog.id, updatedBlog);
-    } catch (error) {
-      console.error('Error updating likes:', error);
-    }
+    const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id };
+    dispatch(updateBlog(blog.id, updatedBlog));
   };
 
   const handleDelete = () => {
     if (window.confirm(`Remove ${blog.title} by ${blog.author}?`)) {
-      deleteBlog(blog.id);
+      dispatch(deleteBlog(blog.id));
     }
   };
 
@@ -76,8 +71,6 @@ Blog.propTypes = {
       name: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
   user: PropTypes.shape({
     username: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

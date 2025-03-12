@@ -1,4 +1,7 @@
 // bloglist-frontend/src/store/reducers/blogReducer.js
+import blogService from '../../services/blogs'
+import { setNotification } from '../../store/reducers/notificationReducer'
+
 const initialState = [];
 
 const blogReducer = (state = initialState, action) => {
@@ -36,7 +39,7 @@ export const createBlog = (blogObject) => {
     dispatch({ type: 'ADD_BLOG', data: blog });
     dispatch(
       setNotification(
-        `a new blog ${blog.title} by ${blog.author} added`,
+        `A new blog "${blog.title}" by ${blog.author} added`,
         'success'
       )
     );
