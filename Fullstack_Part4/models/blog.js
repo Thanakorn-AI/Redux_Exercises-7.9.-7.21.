@@ -9,7 +9,8 @@ const blogSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  comments: [{ type: String }],
 });
 
 // Transform _id to id and remove _id and __v from the JSON output

@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { initializeBlogs } from '../store/reducers/blogReducer';
-import { addComment } from '../store/reducers/blogReducer';
+import { initializeBlogs, addComment } from '../store/reducers/blogReducer';
 
 const BlogView = () => {
   const { id } = useParams();
@@ -24,6 +23,9 @@ const BlogView = () => {
 
   if (!blog) return null;
 
+  // Ensure comments is an array, default to empty if undefined
+  const comments = blog.comments || [];
+
   return (
     <div>
       <h2>{blog.title}</h2>
@@ -36,7 +38,7 @@ const BlogView = () => {
         <button type="submit">Add Comment</button>
       </form>
       <ul>
-        {blog.comments.map((comment, index) => (
+        {comments.map((comment, index) => (
           <li key={index}>{comment}</li>
         ))}
       </ul>

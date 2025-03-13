@@ -17,6 +17,8 @@ import {
   loginUser,
   logoutUser,
 } from './store/reducers/userReducer';
+import User from './components/User'; 
+import BlogView from './components/BlogView'; 
 
 const App = () => {
   const dispatch = useDispatch();

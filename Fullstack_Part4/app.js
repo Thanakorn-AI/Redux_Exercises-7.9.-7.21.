@@ -12,8 +12,23 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(tokenExtractor); // Add middleware before routes
 
+// Define comments route before tokenExtractor
+app.post('/api/blogs/:id/comments', async (req, res) => {
+    const Blog = require('./models/blog');
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ error: 'Blog not found' });
+  
+    const comment = req.body.content;
+    if (!comment) return res.status(400).json({ error: 'Comment content required' });
+  
+    blog.comments = blog.comments || [];
+    blog.comments.push(comment);
+    const updatedBlog = await blog.save();
+    res.status(201).json(updatedBlog);
+  });
+
+app.use(tokenExtractor); // Applies to all routes below
 app.use('/api/blogs', userExtractor, blogRoutes); // Apply userExtractor only to /api/blogs
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
