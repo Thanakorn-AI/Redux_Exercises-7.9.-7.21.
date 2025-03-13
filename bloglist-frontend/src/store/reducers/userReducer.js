@@ -53,6 +53,7 @@ export const initializeUser = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
+      console.log('Initialized user from localStorage:', user);
       blogService.setToken(user.token);
       dispatch({ type: 'SET_USER', data: user });
     }
