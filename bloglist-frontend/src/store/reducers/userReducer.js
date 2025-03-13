@@ -1,19 +1,34 @@
 // bloglist-frontend/src/store/reducers/userReducer.js
 import loginService from '../../services/login'
 import blogService from '../../services/blogs'
+import axios from 'axios';
 
-const initialState = null;
+const initialState = {
+  currentUser: null,
+  allUsers: [],
+};
 
 const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_USER':
-      return action.data;
+      return { ...state, currentUser: action.data };
     case 'CLEAR_USER':
-      return null;
+      return { ...state, currentUser: null };
+    case 'SET_ALL_USERS':
+      return { ...state, allUsers: action.data };
     default:
       return state;
   }
 };
+
+export const initializeUsers = () => {
+  return async (dispatch) => {
+    const response = await axios.get('/api/users');
+    dispatch({ type: 'SET_ALL_USERS', data: response.data });
+  };
+};
+
+
 
 export const loginUser = (credentials) => {
   return async (dispatch) => {
