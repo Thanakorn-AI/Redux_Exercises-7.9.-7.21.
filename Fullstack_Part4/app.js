@@ -25,7 +25,8 @@ app.post('/api/blogs/:id/comments', async (req, res) => {
     blog.comments = blog.comments || [];
     blog.comments.push(comment);
     const updatedBlog = await blog.save();
-    res.status(201).json(updatedBlog);
+    const populatedBlog = await Blog.findById(updatedBlog._id).populate('user', { username: 1, name: 1 });
+    res.status(201).json(populatedBlog);
   });
 
 app.use(tokenExtractor); // Applies to all routes below

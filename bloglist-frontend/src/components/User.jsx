@@ -1,7 +1,7 @@
 // bloglist-frontend/src/components/User.jsx
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // Add Link
 import { initializeUsers } from '../store/reducers/userReducer';
 
 const User = () => {
@@ -22,7 +22,9 @@ const User = () => {
       <h3>Added Blogs</h3>
       <ul>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <li key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+          </li>
         ))}
       </ul>
     </div>
