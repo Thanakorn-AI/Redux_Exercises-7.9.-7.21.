@@ -7,7 +7,7 @@ const loginWith = async (page, username, password) => {
   };
  
   const createBlog = async (page, title, author, url) => {
-    await page.getByRole('button', { name: 'create new blog' }).click();
+    await page.getByRole('button', { name: 'Create new blog' }).click();
     await page.locator('input[placeholder="Enter title"]').fill(title);
     await page.locator('input[placeholder="Enter author"]').fill(author);
     await page.locator('input[placeholder="Enter URL"]').fill(url);

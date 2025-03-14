@@ -21,6 +21,18 @@ const userReducer = (state = initialState, action) => {
   }
 };
 
+const refreshUser = async (token) => {
+  try {
+    const response = await axios.get('/api/users/me', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Expect { username, name, id }
+  } catch (error) {
+    console.error('Failed to refresh user:', error);
+    throw error;
+  }
+};
+
 export const initializeUsers = () => {
   return async (dispatch) => {
     const response = await axios.get('/api/users');
@@ -30,13 +42,14 @@ export const initializeUsers = () => {
 
 
 
-export const loginUser = (credentials) => {
+export const loginUser = (credentials, navigate) => {
   return async (dispatch) => {
     const user = await loginService.login(credentials);
     console.log('Server response:', user);
     blogService.setToken(user.token);
     window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
     dispatch({ type: 'SET_USER', data: user });
+    navigate('/');
   };
 };
 
@@ -49,14 +62,29 @@ export const logoutUser = () => {
 };
 
 export const initializeUser = () => {
-  return (dispatch) => {
+  return async (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      console.log('Initialized user from localStorage:', user);
-      blogService.setToken(user.token);
-      dispatch({ type: 'SET_USER', data: user });
+    if (!loggedUserJSON) return;
+
+    let user = JSON.parse(loggedUserJSON);
+    console.log('Initialized user from localStorage:', user);
+
+    // Check if user has all required fields (e.g., id)
+    if (!user.id) {
+      console.log('User missing id, refreshing from backend...');
+      try {
+        user = await refreshUser(user.token); // Fetch full user data
+        window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user)); // Update localStorage
+        console.log('Refreshed user:', user);
+      } catch (error) {
+        console.log('Refresh failed, logging out...');
+        dispatch(logoutUser()); // Clear invalid session
+        return;
+      }
     }
+
+    blogService.setToken(user.token);
+    dispatch({ type: 'SET_USER', data: user });
   };
 };
 

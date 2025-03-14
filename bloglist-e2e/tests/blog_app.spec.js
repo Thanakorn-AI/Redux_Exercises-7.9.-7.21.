@@ -46,7 +46,7 @@ describe('Blog app', () => {
     });
 
     test('a new blog can be created', async ({ page }) => {
-      await page.getByRole('button', { name: 'create new blog' }).click();
+      await page.getByRole('button', { name: 'Create new blog' }).click();
       await page.locator('input[placeholder="Enter title"]').fill('Playwright Blog');
       await page.locator('input[placeholder="Enter author"]').fill('Playwright Author');
       await page.locator('input[placeholder="Enter URL"]').fill('http://playwrightblog.com');
