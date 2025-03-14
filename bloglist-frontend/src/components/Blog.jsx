@@ -1,20 +1,36 @@
 // bloglist-frontend/src/components/Blog.jsx
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { Card, Flex, Text, Link as StyledLink } from '../styles/StyledComponents';
+
+const BlogCard = styled(Card)`
+  transition: all ${props => props.theme.transitions.default};
+  
+  &:hover {
+    border-color: ${props => props.theme.colors.primary};
+  }
+`;
+
+const BlogTitle = styled(Text)`
+  font-weight: 600;
+  margin-bottom: 0;
+`;
+
+const BlogAuthor = styled.span`
+  color: #666;
+  font-style: italic;
+`;
 
 const Blog = ({ blog, user }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  };
-
   return (
-    <div style={blogStyle}>
-      <Link to={`/blogs/${blog.id}`}>{blog.title}</Link> by {blog.author}
-    </div>
+    <BlogCard as={StyledLink} to={`/blogs/${blog.id}`}>
+      <Flex justify="space-between" align="center">
+        <BlogTitle>
+          {blog.title} <BlogAuthor>by {blog.author}</BlogAuthor>
+        </BlogTitle>
+      </Flex>
+    </BlogCard>
   );
 };
 

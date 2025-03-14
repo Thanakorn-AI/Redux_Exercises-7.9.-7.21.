@@ -1,6 +1,22 @@
 // bloglist-frontend/src/components/BlogForm.jsx
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { 
+  Card, 
+  Subtitle,
+  FormGroup, 
+  Label, 
+  Input, 
+  Button,
+  Flex
+} from '../styles/StyledComponents';
+
+const FormCard = styled(Card)`
+  max-width: 600px;
+  margin: 0 auto ${props => props.theme.spacing.xl};
+`;
+
 
 const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' });
@@ -12,39 +28,51 @@ const BlogForm = ({ createBlog }) => {
   };
 
   return (
-    <div>
-      <h3>create new</h3>
-      <form onSubmit={handleBlogSubmit}>
-        <div>
-          title:
-          <input
-            type="text"
-            value={newBlog.title}
-            onChange={({ target }) => setNewBlog({ ...newBlog, title: target.value })}
-            placeholder="Enter title"
-          />
-        </div>
-        <div>
-          author:
-          <input
-            type="text"
-            value={newBlog.author}
-            onChange={({ target }) => setNewBlog({ ...newBlog, author: target.value })}
-            placeholder="Enter author"
-          />
-        </div>
-        <div>
-          url:
-          <input
-            type="text"
-            value={newBlog.url}
-            onChange={({ target }) => setNewBlog({ ...newBlog, url: target.value })}
-            placeholder="Enter URL"
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
+    <FormCard>
+    <Subtitle>Create New Blog</Subtitle>
+    
+    <form onSubmit={handleBlogSubmit}>
+      <FormGroup>
+        <Label htmlFor="title">Title</Label>
+        <Input
+          id="title"
+          value={newBlog.title}
+          onChange={({ target }) => 
+            setNewBlog({ ...newBlog, title: target.value })}
+          placeholder="Enter title"
+          required
+        />
+      </FormGroup>
+      
+      <FormGroup>
+        <Label htmlFor="author">Author</Label>
+        <Input
+          id="author"
+          value={newBlog.author}
+          onChange={({ target }) => 
+            setNewBlog({ ...newBlog, author: target.value })}
+          placeholder="Enter author"
+          required
+        />
+      </FormGroup>
+      
+      <FormGroup>
+        <Label htmlFor="url">URL</Label>
+        <Input
+          id="url"
+          value={newBlog.url}
+          onChange={({ target }) => 
+            setNewBlog({ ...newBlog, url: target.value })}
+          placeholder="Enter URL"
+          required
+        />
+      </FormGroup>
+      
+      <Flex justify="flex-end">
+        <Button type="submit">Create</Button>
+      </Flex>
+    </form>
+  </FormCard>
   );
 };
 
