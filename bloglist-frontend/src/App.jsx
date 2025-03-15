@@ -24,6 +24,7 @@ import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import Users from './components/Users';
 import User from './components/User';
+import Footer from './components/Footer';
 
 // Styled Components
 import { Container, Title, Flex } from './styles/StyledComponents';
@@ -33,6 +34,8 @@ import styled from 'styled-components';
 const AppContainer = styled.div`
   min-height: 100vh;
   background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
 `;
 
 
@@ -120,6 +123,7 @@ const App = () => {
           </Routes>
         )}
       </Container>
+      <Footer />
     </AppContainer>
   );
 };
