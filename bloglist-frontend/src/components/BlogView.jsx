@@ -4,6 +4,71 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { initializeBlogs, addComment, updateBlog, deleteBlog } from '../store/reducers/blogReducer';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { 
+  Container,
+  Card,
+  Title,
+  Subtitle,
+  Text,
+  Button,
+  IconButton,
+  Input,
+  Flex,
+  List,
+  ListItem,
+  Badge
+} from '../styles/StyledComponents';
+
+const BlogContainer = styled(Container)`
+  max-width: 800px;
+`;
+
+const BlogUrl = styled.a`
+  display: block;
+  margin-bottom: ${props => props.theme.spacing.lg};
+  color: ${props => props.theme.colors.primary};
+  font-weight: 500;
+`;
+
+const LikesCounter = styled(Flex)`
+  background-color: ${props => props.theme.colors.light};
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  margin-bottom: ${props => props.theme.spacing.lg};
+`;
+
+const LikesCount = styled.span`
+  font-weight: 600;
+  margin-right: ${props => props.theme.spacing.md};
+`;
+
+const UserInfo = styled(Text)`
+  font-style: italic;
+  margin-bottom: ${props => props.theme.spacing.lg};
+`;
+
+const CommentForm = styled.form`
+  margin-bottom: ${props => props.theme.spacing.lg};
+`;
+
+const CommentInput = styled(Input)`
+  margin-right: ${props => props.theme.spacing.sm};
+  margin-bottom: 0;
+`;
+
+const CommentsList = styled(List)`
+  background-color: ${props => props.theme.colors.light};
+  border-radius: ${props => props.theme.borderRadius.md};
+  padding: ${props => props.theme.spacing.sm};
+`;
+
+const CommentItem = styled(ListItem)`
+  background-color: ${props => props.theme.colors.white};
+  border-radius: ${props => props.theme.borderRadius.sm};
+  margin-bottom: ${props => props.theme.spacing.sm};
+  box-shadow: ${props => props.theme.shadows.sm};
+`;
 
 const BlogView = () => {
   const { id } = useParams();
@@ -52,28 +117,55 @@ const BlogView = () => {
 
 
   return (
-    <div>
-      <h2>{blog.title}</h2>
-      <p><a href={blog.url}>{blog.url}</a></p>
-      <p>
-        {blog.likes} likes
-        <button onClick={handleLike} data-testid={`like-button-${blog.id}`}>Like</button>
-      </p>
-      <p>Added by {blog.user.name}</p>
-      {showDeleteButton && (
-        <button onClick={handleDelete} data-testid="delete-button">Delete</button>
-      )}
-      <h3>Comments</h3>
-      <form onSubmit={handleComment}>
-        <input value={comment} onChange={(e) => setComment(e.target.value)} />
-        <button type="submit">Add Comment</button>
-      </form>
-      <ul>
-        {comments.map((comment, index) => (
-          <li key={index}>{comment}</li>
-        ))}
-      </ul>
-    </div>
+    <BlogContainer>
+      <Card>
+        <Title>{blog.title}</Title>
+        
+        <BlogUrl href={blog.url} target="_blank" rel="noopener noreferrer">
+          {blog.url}
+        </BlogUrl>
+        
+        <LikesCounter>
+          <LikesCount>{blog.likes} likes</LikesCount>
+          <Button onClick={handleLike} data-testid={`like-button-${blog.id}`} size="sm">Like</Button>
+        </LikesCounter>
+        
+        <UserInfo>Added by {blog.user.name}</UserInfo>
+        
+        {showDeleteButton && (
+          <Button 
+            onClick={handleDelete} 
+            variant="secondary" 
+            style={{ marginBottom: '2rem' }}
+            data-testid="delete-button"
+          >
+            Delete
+          </Button>
+        )}
+        
+        <Subtitle>Comments</Subtitle>
+        
+        <CommentForm onSubmit={handleComment}>
+          <Flex>
+            <CommentInput 
+              value={comment} 
+              onChange={(e) => setComment(e.target.value)} 
+              placeholder="Write a comment..."
+              required
+            />
+            <Button type="submit" size="sm">Add Comment</Button>
+          </Flex>
+        </CommentForm>
+        
+        <CommentsList>
+          {comments.map((comment, index) => (
+            <CommentItem key={index}>
+              {comment}
+            </CommentItem>
+          ))}
+        </CommentsList>
+      </Card>
+    </BlogContainer>
   );
 };
 

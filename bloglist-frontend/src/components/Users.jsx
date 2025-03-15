@@ -3,6 +3,31 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { initializeUsers } from '../store/reducers/userReducer';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import { 
+  Container, 
+  Card, 
+  Title, 
+  Table, 
+  Tr, 
+  Th, 
+  Td,
+  Badge,
+  Link as StyledLink
+} from '../styles/StyledComponents';
+
+const UsersContainer = styled(Container)`
+  max-width: 800px;
+`;
+
+const UserLink = styled(StyledLink)`
+  font-weight: 500;
+`;
+
+const BlogCount = styled(Badge)`
+  min-width: 2.5rem;
+  text-align: center;
+`;
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -13,27 +38,32 @@ const Users = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Blogs Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <UsersContainer>
+      <Card>
+        <Title>Users</Title>
+        
+        <Table>
+          <thead>
+            <Tr>
+              <Th>User</Th>
+              <Th>Blogs Created</Th>
+            </Tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <Tr key={user.id}>
+                <Td>
+                  <UserLink to={`/users/${user.id}`}>{user.name}</UserLink>
+                </Td>
+                <Td>
+                  <BlogCount>{user.blogs.length}</BlogCount>
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      </Card>
+    </UsersContainer>
   );
 };
 

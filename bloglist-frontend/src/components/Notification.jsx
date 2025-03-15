@@ -1,15 +1,13 @@
 // bloglist-frontend/src/components/Notification.jsx
 import PropTypes from 'prop-types';
+import { NotificationContainer } from '../styles/StyledComponents'; 
 
 const Notification = ({ message, type }) => (
-  message && (
-    <div
-      data-testid="notification"
-      style={{ color: type === 'error' ? 'red' : 'green', padding: '10px' }}
-    >
+  message ? (
+    <NotificationContainer data-testid="notification" type={type}>
       {message}
-    </div>
-  )
+    </NotificationContainer>
+  ) : null
 );
 
 Notification.propTypes = {

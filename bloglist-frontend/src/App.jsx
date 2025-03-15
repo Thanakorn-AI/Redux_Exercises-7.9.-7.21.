@@ -1,12 +1,8 @@
 // bloglist-frontend/src/App.jsx
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import Blog from './components/Blog';
-import Users from './components/Users';
-import Notification from './components/Notification';
-import Togglable from './components/Togglable';
-import BlogForm from './components/BlogForm';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+
 import {
   initializeBlogs,
   createBlog,
@@ -17,39 +13,28 @@ import {
   loginUser,
   logoutUser,
 } from './store/reducers/userReducer';
-import User from './components/User';
+
+// Components
+import NavBar from './components/NavBar';
 import BlogView from './components/BlogView';
+import Blog from './components/Blog';
+import BlogForm from './components/BlogForm';
+import Togglable from './components/Togglable';
+import LoginForm from './components/LoginForm';
+import Notification from './components/Notification';
+import Users from './components/Users';
+import User from './components/User';
 
-// Separate Login Form Component
-const LoginForm = ({ onLogin }) => {
-  const handleLogin = async (event) => {
-    event.preventDefault();
-    const username = event.target.username.value;
-    const password = event.target.password.value;
-    await onLogin({ username, password });
-    event.target.username.value = '';
-    event.target.password.value = '';
-  };
+// Styled Components
+import { Container, Title, Flex } from './styles/StyledComponents';
+import styled from 'styled-components';
 
-  return (
-    <div data-testid="login-form">
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input type="text" name="username" data-testid="username" />
-        </div>
-        <div>
-          password
-          <input type="password" name="password" data-testid="password" />
-        </div>
-        <button type="submit" data-testid="login-button">
-          login
-        </button>
-      </form>
-    </div>
-  );
-};
+
+const AppContainer = styled.div`
+  min-height: 100vh;
+  background-color: #f9f9f9;
+`;
+
 
 const App = () => {
   const dispatch = useDispatch();
@@ -69,7 +54,7 @@ const App = () => {
 
   const handleLogin = async (credentials) => {
     try {
-      await dispatch(loginUser(credentials, navigate)); // navigate is available here via Router
+      await dispatch(loginUser(credentials, navigate));
     } catch (exception) {
       console.log('Login error:', exception);
       dispatch(
@@ -83,7 +68,7 @@ const App = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate('/'); // Optional: redirect to root on logout
+    navigate('/');
   };
 
   const handleCreateBlog = (blogObject) => {
@@ -100,42 +85,42 @@ const App = () => {
   };
 
   return (
-      <div>
+    <AppContainer>
+      <NavBar user={user} onLogout={handleLogout} />
+      
+      <Container>
         <Notification message={notification.message} type={notification.type} />
+        
         {!user ? (
           <LoginForm onLogin={handleLogin} />
         ) : (
-          <>
-            <nav style={{ marginBottom: 10 }}>
-              <Link style={{ marginRight: 10 }} to="/">Blogs</Link>
-              <Link style={{ marginRight: 10 }} to="/users">Users</Link>
-              <span>
-                {user.name} logged in{' '}
-                <button onClick={handleLogout}>Logout</button>
-              </span>
-            </nav>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <>
-                    <h2>Blogs</h2>
-                    <Togglable buttonLabel="Create new blog" ref={blogFormRef}>
-                      <BlogForm createBlog={handleCreateBlog} />
-                    </Togglable>
-                    {blogs.map((blog) => (
-                      <Blog key={blog.id} blog={blog} user={user} />
-                    ))}
-                  </>
-                }
-              />
-              <Route path="/users" element={<Users />} />
-              <Route path="/users/:id" element={<User />} />
-              <Route path="/blogs/:id" element={<BlogView />} />
-            </Routes>
-          </>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Title>Blogs</Title>
+                  <Togglable buttonLabel="Create new blog" ref={blogFormRef}>
+                    <BlogForm createBlog={handleCreateBlog} />
+                  </Togglable>
+                  
+                  <Flex direction="column">
+                    {blogs
+                      .sort((a, b) => b.likes - a.likes)
+                      .map((blog) => (
+                        <Blog key={blog.id} blog={blog} user={user} />
+                      ))}
+                  </Flex>
+                </>
+              }
+            />
+            <Route path="/users" element={<Users />} />
+            <Route path="/users/:id" element={<User />} />
+            <Route path="/blogs/:id" element={<BlogView />} />
+          </Routes>
         )}
-      </div>
+      </Container>
+    </AppContainer>
   );
 };
 
